@@ -3,6 +3,7 @@ export default {
   name: 'api',
   props: [
     'token',
+    'stoken',
     'online'
   ],
   render () {
@@ -26,11 +27,7 @@ export default {
           return
         }
         this.socket.onopen = () => {
-          if (this.token !== null && this.token !== undefined) {
-            this.send({f: 'auth', token: this.token}, true)
-          } else {
-            this.$emit('setOnline', true)
-          }
+          this.send({f: 'token', token: this.token, stoken: this.stoken}, true)
           for (var i = 0; i < this.subscriptions.length; i++) {
             this.subscribe(this.bindings[i].method, { f: 'subscribe' }, this.bindings[i])
           }
@@ -73,41 +70,24 @@ export default {
       },
       executeServerMessage: function (obj) {
         switch (obj.f) {
-          case 'auth':
+          case 'token':
             if (obj.error !== false) {
-              localStorage.removeItem('account')
+              this.$emit('settoken', null)
+              this.$emit('setstoken', null)
               localStorage.removeItem('token')
+              sessionStorage.removeItem('stoken')
               this.$router.push('/')
+              return
             }
+            localStorage.setItem('token', obj.content.token)
+            sessionStorage.setItem('stoken', obj.content.stoken)
+            this.$emit('settoken', obj.content.token)
+            this.$emit('setstoken', obj.content.stoken)
             this.$emit('setOnline', true)
             break
-          case 'login':
-            if (obj.auth === true) {
-              localStorage.setItem('token', obj.content.token)
-              localStorage.setItem('account', JSON.stringify(obj.content.user))
-              this.$emit('settoken', obj.content.token)
-              this.$router.push('/')
-            } else {
-              console.log(obj)
-            }
-            break
-          case 'logout':
-            if (obj.error === false) {
-              localStorage.removeItem('account')
-              localStorage.removeItem('token')
-              this.$emit('settoken', null)
-              this.$router.push('/')
-            } else {
-              console.log(obj)
-            }
-            break
-          case 'fetch':
-            if (obj.error === false) {
-              if (this.bindings[obj.tid - 1] !== undefined && this.bindings[obj.tid - 1] !== null) {
-                this.bindings[obj.tid - 1].f(obj).bind(this.bindings[obj.tid - 1].context)
-              }
-            } else {
-              console.log(obj)
+          default:
+            if (this.bindings[obj.tid - 1] !== undefined && this.bindings[obj.tid - 1] !== null) {
+              this.bindings[obj.tid - 1].f(obj).bind(this.bindings[obj.tid - 1].context)
             }
             break
         }
@@ -144,6 +124,7 @@ export default {
       this.send({ f: method, options: options, tid: el.obj.tid })
     },
     unsubscribe: function (method, options, el) {
+      console.log('unsubscribe')
       this.bindings.splice(el.obj.tid, 1)
       this.subscriptions.splice(this.bindings.indexOf(el.obj.tid))
       this.send({ f: method, options: options, tid: el.obj.tid })

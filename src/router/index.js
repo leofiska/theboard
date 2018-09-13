@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Game from '@/components/Game'
+import Session from '@/components/Session'
 import Home from '@/components/Home'
 
 Vue.use(Router)
@@ -13,9 +13,9 @@ export default new Router({
       component: Home
     },
     {
-      path: '/game/*',
-      name: 'game',
-      component: Game
+      path: '/session/*',
+      name: 'session',
+      component: Session
     }
   ]
 })

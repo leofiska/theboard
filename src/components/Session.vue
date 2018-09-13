@@ -12,7 +12,7 @@
 import Loading from './Loading.vue'
 
 export default {
-  name: 'game',
+  name: 'session',
   components: {Loading},
   data () {
     return {
@@ -30,37 +30,36 @@ export default {
   },
   props: [ 'title' ],
   beforeMount () {
-    this.$emit('subscribe', 'game', { f: 'subscribe' }, { method: 'game', f: this.storno, context: this, obj: this.items })
+    this.$emit('subscribe', 'session', { f: 'subscribe', id: this.$router.currentRoute.query.id }, { method: 'session', f: this.storno, context: this, obj: this.items })
   },
   beforeDestroy () {
-    this.$emit('unsubscribe', 'game', { f: 'unsubscribe' }, { method: 'game', f: this.storno, context: this, obj: this.items })
+    this.$emit('unsubscribe', 'session', { f: 'unsubscribe', id: this.$router.currentRoute.query.id }, { method: 'session', f: this.storno, context: this, obj: this.items })
   },
   mounted () {
-    document.title = this.game_id + ' | ' + this.title
+    document.title = this.session_id + ' | ' + this.title
   },
   methods: {
     refresh () {
       this.items.loading = true
-      this.$emit('fetch', 'game', { f: 'list' }, { method: 'game', f: this.storno, context: this, obj: this.items })
+      this.$emit('fetch', 'session', { f: 'info' }, { method: 'session', f: this.storno, context: this, obj: this.items })
     },
     storno (obj) {
-      if (obj.content !== undefined && obj.content.items !== undefined) {
-        this.items.elements = obj.content.items
-        this.items.loading = false
-      }
-      if (obj.add !== undefined && obj.add) {
-        this.loading = false
-        this.hide_add()
+      console.log('storno')
+      console.log(obj)
+      switch (obj.f) {
+        case 'info':
+          this.items.loading = false
+          break
       }
     }
   },
   computed: {
-    game_id () {
+    session_id () {
       return this.$router.currentRoute.query.id
     },
     d () {
       return {
-        title: 'Game ' + this.$router.currentRoute.query.id
+        title: 'session ' + this.$router.currentRoute.query.id
       }
     }
   }

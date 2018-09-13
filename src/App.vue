@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-api ref='api' :token="token" @settoken="token = $event" :online="online" @setOnline="online = $event" />
-    <Navigator :token="token" @settoken="token = $event" :online="online" :title="title" />
+    <v-api ref='api' :token="token" @settoken="token = $event" :stoken="stoken" @setstoken="stoken = $event" :online="online" @setOnline="online = $event" />
+    <Navigator :token="token" @settoken="token = $event" :stoken="stoken" @setstoken="stoken = $event" :online="online" :title="title" />
     <div id="app">
-      <router-view @fetch="fetch" @subscribe="subscribe" @unsubscribe="unsubscribe" :title="title" :online="online" :token="token" />
+      <router-view @fetch="fetch" @subscribe="subscribe" @unsubscribe="unsubscribe" :title="title" :online="online" :token="token" :stoken="stoken" />
     </div>
     <Footer />
   </div>
@@ -18,6 +18,7 @@ export default {
   data () {
     return {
       token: localStorage.getItem('token'),
+      stoken: sessionStorage.getItem('stoken'),
       online: false,
       title: 'fBoard'
     }
