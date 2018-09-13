@@ -87,7 +87,7 @@ export default {
             break
           default:
             if (this.bindings[obj.tid - 1] !== undefined && this.bindings[obj.tid - 1] !== null) {
-              this.bindings[obj.tid - 1].f(obj).bind(this.bindings[obj.tid - 1].context)
+              this.bindings[obj.tid - 1].storno(obj).bind(this.bindings[obj.tid - 1].context)
             }
             break
         }
@@ -106,28 +106,27 @@ export default {
       if (localStorage.getItem('token') === null || localStorage.getItem('token') === undefined) return false
       this.send({ f: 'logout', token: localStorage.getItem('token') })
     },
-    fetch: function (method, options, el) {
-      if (el.obj.tid < 0) {
-        el.obj.tid = this.bindings.push(el)
+    fetch: function (request) {
+      if (request.sync.tid < 0) {
+        request.sync.tid = this.bindings.push(request)
       }
-      this.send({ f: method, options: options, tid: el.obj.tid })
+      this.send({ f: request.method, options: request.options, tid: request.sync.tid })
     },
-    subscribe: function (method, options, el) {
+    subscribe: function (request) {
       if (!this.online) {
-        setTimeout(this.subscribe.bind(this), 100, method, options, el)
+        setTimeout(this.subscribe.bind(this), 100, request)
         return
       }
-      if (el.obj.tid < 0) {
-        el.obj.tid = this.bindings.push(el)
-        this.subscriptions.push(el.obj.tid)
+      if (request.sync.tid < 0) {
+        request.sync.tid = this.bindings.push(request)
+        this.subscriptions.push(request.sync.tid)
       }
-      this.send({ f: method, options: options, tid: el.obj.tid })
+      this.send({ f: request.method, options: request.options, tid: request.sync.tid })
     },
-    unsubscribe: function (method, options, el) {
-      console.log('unsubscribe')
-      this.bindings.splice(el.obj.tid, 1)
-      this.subscriptions.splice(this.bindings.indexOf(el.obj.tid))
-      this.send({ f: method, options: options, tid: el.obj.tid })
+    unsubscribe: function (request) {
+      this.bindings.splice(request.sync.tid, 1)
+      this.subscriptions.splice(this.bindings.indexOf(request.sync.tid))
+      this.send({ f: request.method, options: request.options, tid: request.sync.tid })
     }
   }
 }

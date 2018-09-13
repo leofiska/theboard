@@ -30,10 +30,10 @@ export default {
   },
   props: [ 'title' ],
   beforeMount () {
-    this.$emit('subscribe', 'session', { f: 'subscribe', id: this.$router.currentRoute.query.id }, { method: 'session', f: this.storno, context: this, obj: this.items })
+    this.$emit('subscribe', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'subscribe', id: this.$router.currentRoute.query.id } })
   },
   beforeDestroy () {
-    this.$emit('unsubscribe', 'session', { f: 'unsubscribe', id: this.$router.currentRoute.query.id }, { method: 'session', f: this.storno, context: this, obj: this.items })
+    this.$emit('unsubscribe', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'unsubscribe', id: this.$router.currentRoute.query.id } })
   },
   mounted () {
     document.title = this.session_id + ' | ' + this.title
@@ -41,7 +41,7 @@ export default {
   methods: {
     refresh () {
       this.items.loading = true
-      this.$emit('fetch', 'session', { f: 'info' }, { method: 'session', f: this.storno, context: this, obj: this.items })
+      this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'info', id: this.$router.currentRoute.query.id } })
     },
     storno (obj) {
       console.log('storno')

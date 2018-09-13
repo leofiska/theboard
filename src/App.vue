@@ -31,14 +31,14 @@ export default {
     Footer
   },
   methods: {
-    fetch (method, options, item) {
-      this.$refs.api.fetch(method, options, item)
+    fetch (request) {
+      this.$refs.api.fetch(request)
     },
-    subscribe (method, options, item) {
-      this.$refs.api.subscribe(method, options, item)
+    subscribe (request) {
+      this.$refs.api.subscribe(request)
     },
-    unsubscribe (method, options, item) {
-      this.$refs.api.unsubscribe(method, options, item)
+    unsubscribe (request) {
+      this.$refs.api.unsubscribe(request)
     }
   }
 }
