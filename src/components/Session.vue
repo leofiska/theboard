@@ -1,23 +1,21 @@
 <template>
   <div class="hello">
     <div class='d-inline-block'>
-      <h2>{{d.title}}</h2>
-      <button class='btn btn-dark' @click='refresh'>{{s.refresh}}</button><br />
-      <Loading :loading="this.items.loading"></Loading>
+      <button class='btn btn-dark' @click='refresh' :disabled="!online">{{s.refresh}}</button>
+      <br />
+      User ID: {{this.id}}<br />
+      Session ID: {{items.elements.id}}
     </div>
   </div>
 </template>
 
 <script>
-import Loading from './Loading.vue'
 
 export default {
   name: 'session',
-  components: {Loading},
   data () {
     return {
       adding: false,
-      loading: false,
       sname: '',
       name: '',
       cpf: '',
@@ -25,10 +23,16 @@ export default {
         cancel: 'cancel',
         refresh: 'refresh'
       },
-      items: { tid: -1, loading: true, elements: [] }
+      items: { tid: -1, elements: [] }
     }
   },
-  props: [ 'title' ],
+  props: [
+    'online',
+    'title',
+    'id',
+    'token',
+    'loading'
+  ],
   beforeMount () {
     this.$emit('subscribe', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'subscribe', id: this.$router.currentRoute.query.id } })
   },
@@ -40,7 +44,7 @@ export default {
   },
   methods: {
     refresh () {
-      this.items.loading = true
+      this.$emit('setloading', true)
       this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'info', id: this.$router.currentRoute.query.id } })
     },
     storno (obj) {
@@ -56,8 +60,10 @@ export default {
                 this.$router.push('/')
                 break
             }
+          } else {
+            this.items.elements = obj.content.elements
           }
-          this.items.loading = false
+          this.$emit('setloading', false)
           break
       }
     }

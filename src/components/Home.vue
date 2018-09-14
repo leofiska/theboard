@@ -19,7 +19,6 @@ export default {
   data () {
     return {
       session_id: '',
-      loading: true,
       s: {
         fboard: 'fBoard, a websocket engine',
         session_id: 'ID',
@@ -34,20 +33,24 @@ export default {
   },
   props: [
     'title',
-    'token'
+    'token',
+    'loading'
   ],
   mounted () {
     document.title = this.title
   },
   methods: {
     create_session: function () {
+      this.$emit('setloading', true)
       this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'create', id: this.$router.currentRoute.query.id } })
     },
     join_session: function () {
+      this.$emit('setloading', true)
       this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'join', id: this.session_id } })
       // this.$router.push('/session/?id=' + this.session_id)
     },
     storno (obj) {
+      this.$emit('setloading', false)
       switch (obj.f) {
         case 'create':
           if (obj.error !== false) return

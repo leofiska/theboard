@@ -1,8 +1,8 @@
 <template>
-  <span>
+  <div class="loading">
     <icon name="sync" v-if="!loading" scale="1" />
     <icon name="sync" spin v-else scale="1" />
-  </span>
+  </div>
 </template>
 <script>
 export default {
@@ -12,3 +12,13 @@ export default {
   ]
 }
 </script>
+
+<style scoped>
+div.loading {
+  position: absolute;
+  top: 0rem;
+  left: 0;
+  right: 0;
+  display: inline-block;
+}
+</style>

@@ -1,9 +1,10 @@
 <template>
   <div>
-    <v-api ref='api' :token="token" @settoken="token = $event" :stoken="stoken" @setstoken="stoken = $event" :online="online" @setOnline="online = $event" />
+    <v-api ref='api' :id="id" @setid="id = $event" :token="token" @settoken="token = $event" :stoken="stoken" @setstoken="stoken = $event" :online="online" @setOnline="online = $event" />
     <Navigator :token="token" @settoken="token = $event" :stoken="stoken" @setstoken="stoken = $event" :online="online" :title="title" />
     <div id="app">
-      <router-view @fetch="fetch" @subscribe="subscribe" @unsubscribe="unsubscribe" :title="title" :online="online" :token="token" :stoken="stoken" />
+      <Loading v-if="this.loading" :loading="this.loading" />
+      <router-view @fetch="fetch" @subscribe="subscribe" @unsubscribe="unsubscribe" :title="title" :online="online" :id="id" :token="token" :stoken="stoken" :loading="this.loading" @setloading="loading = $event" />
     </div>
     <Footer />
   </div>
@@ -12,11 +13,14 @@
 <script>
 import Navigator from '@/components/Navigator'
 import Footer from '@/components/Footer'
+import Loading from '@/components/Loading.vue'
 
 export default {
   name: 'App',
   data () {
     return {
+      loading: false,
+      id: null,
       token: localStorage.getItem('token'),
       stoken: sessionStorage.getItem('stoken'),
       online: false,
@@ -28,7 +32,8 @@ export default {
   },
   components: {
     Navigator,
-    Footer
+    Footer,
+    Loading
   },
   methods: {
     fetch (request) {
@@ -50,8 +55,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 1.5rem;
+  padding-top: 2rem;
   margin-bottom: 1.5rem;
   min-height: 100vh;
+  position: relative;
 }
 </style>

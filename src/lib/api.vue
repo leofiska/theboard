@@ -83,6 +83,7 @@ export default {
             sessionStorage.setItem('stoken', obj.content.stoken)
             this.$emit('settoken', obj.content.token)
             this.$emit('setstoken', obj.content.stoken)
+            this.$emit('setid', obj.content.id)
             this.$emit('setOnline', true)
             break
           default:
