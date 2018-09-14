@@ -29,7 +29,7 @@ export default {
         this.socket.onopen = () => {
           this.send({f: 'token', token: this.token, stoken: this.stoken}, true)
           for (var i = 0; i < this.subscriptions.length; i++) {
-            this.subscribe(this.bindings[i].method, { f: 'subscribe' }, this.bindings[i])
+            this.subscribe(this.bindings[i])
           }
         }
         this.socket.onmessage = (e) => {
