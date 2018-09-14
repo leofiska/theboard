@@ -48,6 +48,15 @@ export default {
       console.log(obj)
       switch (obj.f) {
         case 'info':
+          if (obj.error !== false) {
+            switch (obj.error) {
+              case 500:
+                break
+              default:
+                this.$router.push('/')
+                break
+            }
+          }
           this.items.loading = false
           break
       }
