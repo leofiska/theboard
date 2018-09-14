@@ -29,7 +29,7 @@ export default {
         this.socket.onopen = () => {
           this.send({f: 'token', token: this.token, stoken: this.stoken}, true)
           for (var i = 0; i < this.subscriptions.length; i++) {
-            this.subscribe(this.bindings[i])
+            this.subscribe(this.bindings[this.subscriptions[i] - 1])
           }
         }
         this.socket.onmessage = (e) => {
@@ -86,6 +86,8 @@ export default {
             this.$emit('setOnline', true)
             break
           default:
+            // console.log('received')
+            // console.log(obj)
             if (this.bindings[obj.tid - 1] !== undefined && this.bindings[obj.tid - 1] !== null) {
               this.bindings[obj.tid - 1].storno(obj).bind(this.bindings[obj.tid - 1].context)
             }
@@ -117,7 +119,6 @@ export default {
         setTimeout(this.subscribe.bind(this), 100, request)
         return
       }
-      console.log(request)
       if (request.sync.tid < 0) {
         request.sync.tid = this.bindings.push(request)
         this.subscriptions.push(request.sync.tid)
@@ -125,8 +126,8 @@ export default {
       this.send({ f: request.method, options: request.options, tid: request.sync.tid })
     },
     unsubscribe: function (request) {
-      this.bindings.splice(this.subscriptions.indexOf(request.sync.tid))
-      this.subscriptions.splice(request.sync.tid, 1)
+      this.bindings[request.sync.tid - 1] = null
+      this.subscriptions.splice(this.subscriptions.indexOf(request.sync.tid), 1)
       this.send({ f: request.method, options: request.options, tid: request.sync.tid })
     }
   }
