@@ -117,6 +117,7 @@ export default {
         setTimeout(this.subscribe.bind(this), 100, request)
         return
       }
+      console.log(request)
       if (request.sync.tid < 0) {
         request.sync.tid = this.bindings.push(request)
         this.subscriptions.push(request.sync.tid)
@@ -124,8 +125,8 @@ export default {
       this.send({ f: request.method, options: request.options, tid: request.sync.tid })
     },
     unsubscribe: function (request) {
-      this.bindings.splice(request.sync.tid, 1)
-      this.subscriptions.splice(this.bindings.indexOf(request.sync.tid))
+      this.bindings.splice(this.subscriptions.indexOf(request.sync.tid))
+      this.subscriptions.splice(request.sync.tid, 1)
       this.send({ f: request.method, options: request.options, tid: request.sync.tid })
     }
   }
