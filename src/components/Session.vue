@@ -1,10 +1,20 @@
 <template>
   <div class="hello">
     <div class='d-inline-block'>
+      {{s.sessionid}}: {{items.elements.id}}<br />
+      {{s.creatorid}}: {{this.items.elements.creator}}<br />
+      <div v-if="!this.items.elements.started">
+        <div v-if="this.id === this.items.elements.creator">
+          define attributes
+        </div>
+        <div v-else>
+          {{s.waitingstart}}
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button v-if="!this.items.elements.started && this.id === this.items.elements.creator" class='btn btn-dark' type='button' @click='start' :disabled="!online">{{s.start}}</button>
       <button class='btn btn-dark' @click='refresh' :disabled="!online">{{s.refresh}}</button>
-      <br />
-      User ID: {{this.id}}<br />
-      Session ID: {{items.elements.id}}
     </div>
   </div>
 </template>
@@ -15,13 +25,13 @@ export default {
   name: 'session',
   data () {
     return {
-      adding: false,
-      sname: '',
-      name: '',
-      cpf: '',
       s: {
         cancel: 'cancel',
-        refresh: 'refresh'
+        refresh: 'refresh',
+        start: 'start',
+        creatorid: 'Creator ID',
+        sessionid: 'Session ID',
+        waitingstart: 'waiting for session to start'
       },
       items: { tid: -1, elements: [] }
     }
@@ -47,16 +57,21 @@ export default {
       this.$emit('setloading', true)
       this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'info', id: this.$router.currentRoute.query.id } })
     },
+    start () {
+      this.$emit('setloading', true)
+      this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'start', id: this.$router.currentRoute.query.id } })
+    },
     storno (obj) {
       console.log('storno')
-      console.log(obj)
+      console.log(JSON.stringify(obj))
       switch (obj.f) {
         case 'info':
           if (obj.error !== false) {
             switch (obj.error) {
+              default:
               case 500:
                 break
-              default:
+              case 404:
                 this.$router.push('/')
                 break
             }

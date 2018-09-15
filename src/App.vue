@@ -27,7 +27,7 @@ export default {
       title: 'fBoard'
     }
   },
-  mounted () {
+  beforeCreate () {
     document.title = this.title
   },
   components: {
