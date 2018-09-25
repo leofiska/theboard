@@ -81,7 +81,6 @@ export default {
           rules.push(row)
         }
         if (rules.length !== 0) {
-          console.log(this)
           context.$emit('fetch', { method: 'session', storno: context.storno, context: context, sync: context.items, options: { f: 'set_rules', rules: rules, id: context.$router.currentRoute.query.id } })
         } else {
           console.log('rules not parsed')
