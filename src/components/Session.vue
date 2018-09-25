@@ -5,7 +5,8 @@
       {{s.creatorid}}: {{this.items.elements.creator}}<br />
       <div v-if="!this.items.elements.started">
         <div v-if="this.id === this.items.elements.creator">
-          define attributes
+          <input class='btn btn-dark' type="file" id="fileToLoad">
+          <button class='btn btn-dark' @click='loadFileAsText'>Load Selected File</button>
         </div>
         <div v-else>
           {{s.waitingstart}}
@@ -60,6 +61,33 @@ export default {
     start () {
       this.$emit('setloading', true)
       this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'start', id: this.$router.currentRoute.query.id } })
+    },
+    loadFileAsText () {
+      var fileToLoad = document.getElementById('fileToLoad').files[0]
+      var fileReader = new FileReader()
+      fileReader.onload = function (fileLoadedEvent) {
+        var textFromFileLoaded = fileLoadedEvent.target.result
+        var arrTmp = textFromFileLoaded.split(/\r\n|\r|\n/g)
+        arrTmp = arrTmp.filter(function (n) { return n !== '' })
+        var rules = []
+        for (var i = 0; i < arrTmp.length; i++) {
+          var row = arrTmp[i].split(';')
+          if (row.length !== 2) {
+            console.log('invalid file')
+            return
+          }
+          row = { house: parseInt(row[0]), movement: parseInt(row[1]) }
+          rules.push(row)
+        }
+        if (rules.length !== 0) {
+          this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'set_rules', rules: rules, id: this.$router.currentRoute.query.id } })
+          console.log(rules)
+        } else {
+          console.log('rules not parsed')
+        }
+        // document.getElementById("inputTextToSave").value = textFromFileLoaded;
+      }
+      fileReader.readAsText(fileToLoad, 'UTF-8')
     },
     storno (obj) {
       console.log('storno')

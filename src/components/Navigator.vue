@@ -1,6 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="light" variant="light" :sticky="true">
-    <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+  <b-navbar type="light" variant="light" :sticky="true">
     <b-navbar-brand to="/">{{title}}</b-navbar-brand>
   </b-navbar>
 </template>
