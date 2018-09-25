@@ -65,6 +65,7 @@ export default {
     loadFileAsText () {
       var fileToLoad = document.getElementById('fileToLoad').files[0]
       var fileReader = new FileReader()
+      var context = this
       fileReader.onload = function (fileLoadedEvent) {
         var textFromFileLoaded = fileLoadedEvent.target.result
         var arrTmp = textFromFileLoaded.split(/\r\n|\r|\n/g)
@@ -80,8 +81,8 @@ export default {
           rules.push(row)
         }
         if (rules.length !== 0) {
-          this.$emit('fetch', { method: 'session', storno: this.storno, context: this, sync: this.items, options: { f: 'set_rules', rules: rules, id: this.$router.currentRoute.query.id } })
-          console.log(rules)
+          console.log(this)
+          context.$emit('fetch', { method: 'session', storno: context.storno, context: context, sync: context.items, options: { f: 'set_rules', rules: rules, id: context.$router.currentRoute.query.id } })
         } else {
           console.log('rules not parsed')
         }
